@@ -121,9 +121,9 @@ void Sudoku::changeRow(int a,int b){
 	}
 	else if(low == 1 && high == 2){
 		for(i=27;i<54;i++){
-			temp[i]=sudokuIn[i];
+			temp[i-27]=sudokuIn[i];
 			sudokuIn[i]=sudokuIn[i+27];
-			sudokuIn[i+27]=temp[i];
+			sudokuIn[i+27]=temp[i-27];
 		}
 	}
 	else if(low == 0 && high == 2){
@@ -136,7 +136,41 @@ void Sudoku::changeRow(int a,int b){
 };
 
 void Sudoku::changeCol(int a,int b){
+	int temp[27];
+	int low,high,i,index;
+	if(a>b){
+		high=a;
+		low=b;
+	}
+	else{
+		high=b;
+		low=a;
+	}
 
+	if(low == 0 && high == 1){
+		for(i=0;i<27;i++){
+			index=(i/3)*9+(i%3);
+			temp[i]=sudokuIn[index];
+			sudokuIn[index]=sudokuIn[index+3];
+			sudokuIn[index+3]=temp[i];
+		}
+	}
+	else if(low == 1 && high == 2){
+		for(i=0;i<27;i++){
+			index=(i/3)*9+(i%3);
+			temp[i]=sudokuIn[index+3];
+			sudokuIn[index+3]=sudokuIn[index+6];
+			sudokuIn[index+6]=temp[i];
+		}
+	}
+	else if(low == 0 && high == 2){
+		for(i=0;i<27;i++){
+			index=(i/3)*9+(i%3);
+			temp[i]=sudokuIn[index];
+			sudokuIn[index]=sudokuIn[index+6];
+			sudokuIn[index+6]=temp[i];
+		}
+	}
 };
 
 void Sudoku::rotate(){

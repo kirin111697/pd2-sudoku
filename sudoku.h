@@ -6,7 +6,6 @@ class Sudoku{
 public:
 	void giveQuestion();
 	void readIn();
-	void getElement();
 	void solve();
 	void changeNum(int a, int b);
 	void changeRow(int a, int b);
@@ -14,9 +13,11 @@ public:
 	void rotate(int n);
 	void flip(int n);
 	void transform();
-	map<int,int> sudokuIn;
 	static const int sudokuSize = 81;
+	int getElement(int i);
+	bool checkUnity(int arr[]);
 
 private:
-	bool checkUnity(int arr[]);
+	
+	map<int,int> sudokuIn;
 };

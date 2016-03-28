@@ -83,40 +83,59 @@ bool Sudoku::check_answer(){
 };
 
 void Sudoku::changeNum(int a,int b){
-	srand(time(NULL));
-	int changeNum1,changeNum2;
-	int i,count;
-	count=rand()%9+1;
-
-	while(count){
-
-		changeNum1=rand()%9+1;
-		changeNum2=rand()%9+1;
-
-		while(changeNum1 == changeNum2){
-			changeNum2=rand()%9+1;
+	for(i=0;i<sudokuSize;i++){
+		if(sudokuIn[i] == b){
+			sudokuIn[i] = 0;
 		}
-
-		for(i=0;i<sudokuSize;i++){
-			if(sudokuIn[i] == changeNum2){
-				sudokuIn[i] = 0;
-			}
+	}
+	for(i=0;i<sudokuSize;i++){
+		if(sudokuIn[i] == a){
+			sudokuIn[i] = b;
 		}
-		for(i=0;i<sudokuSize;i++){
-			if(sudokuIn[i] == changeNum1){
-				sudokuIn[i] = changeNum2;
-			}
+	}
+	for(i=0;i<sudokuSize;i++){
+		if(sudokuIn[i] == 0){
+			sudokuIn[i] = a;
 		}
-		for(i=0;i<sudokuSize;i++){
-			if(sudokuIn[i] == 0){
-				sudokuIn[i] = changeNum1;
-			}
-		}
-		count--;
 	}
 };
 
-void Sudoku::changeCol(){
+void Sudoku::changeRow(int a,int b){
+	int temp[27];
+	int low,high,i;
+	if(a>b){
+		high=a;
+		low=b;
+	}
+	else{
+		high=b;
+		low=a;
+	}
+
+	if(low == 0 && high == 1){
+		for(i=0;i<27;i++){
+			temp[i]=sudokuIn[i];
+			sudokuIn[i]=sudokuIn[i+27];
+			sudokuIn[i+27]=temp[i];
+		}
+	}
+	else if(low == 1 && high == 2){
+		for(i=27;i<54;i++){
+			temp[i]=sudokuIn[i];
+			sudokuIn[i]=sudokuIn[i+27];
+			sudokuIn[i+27]=temp[i];
+		}
+	}
+	else if(low == 0 && high == 2){
+		for(i=0;i<27;i++){
+			temp[i]=sudokuIn[i];
+			sudokuIn[i]=sudokuIn[i+54];
+			sudokuIn[i+54]=temp[i];
+		}
+	}
+};
+
+void Sudoku::changeCol(int a,int b){
 
 };
 

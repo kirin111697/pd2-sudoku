@@ -217,29 +217,35 @@ void Sudoku::rotate(int n){
 };
 
 void Sudoku::flip(int n){
-	int i,j;
-	int temp[9];
+	int i,j,count;
+	int copy[81];
+
+	for(i=0;i<81;i++){
+		copy[i]=sudokuIn[i];
+	}
+	
 	switch(n){
 		case 0://vertical
-			for(i=0;i<4;i++){//0&8.1&7,2&6,3&5
-				for(j=i*9;j<(i*9+9);j++){
-					temp[j]=sudokuIn[j];
-					sudokuIn[j]=sudokuIn[j+(4-i)*2*9];
-					sudokuIn[j+(4-i)*2*9]=temp[j];
+			for(i=0;i<9;i++){
+				getRow(i*9,copy);
+				count=0;
+				for(j=(8-i)*9;j<((8-i)*9+9);j++){
+					sudokuIn[j]=arr_check[count];
+					count++;
 				}
 			}
 			break;
 		case 1:
-			for(i=0;i<4;i++){//0&8.1&7,2&6,3&5
-				for(j=0;j<9;j++){
-					temp[j]=sudokuIn[i+j*9];
-					sudokuIn[i+j*9]=sudokuIn[i+j*9+(4-i)*2];
-					sudokuIn[i+j*9+(4-i)*2]=temp[j];
+			for(i=0;i<9;i++){
+				getCol(i,copy);
+				count=0;
+				for(j=8-i;j<(8-i)+73;j+=9){
+					sudokuIn[j]=arr_check[count];
+					count++;
 				}
 			}
 			break;
 	}
-
 };
 
 void Sudoku::transform(){

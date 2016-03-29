@@ -42,25 +42,25 @@ int Sudoku::getElement(int i){
 void Sudoku::getRow(int index, int arr[]){
 	int i;
 	for(i=0;i<9;i++){
-		arr_check[i] = arr[intdex+i]
+		arr_check[i] = arr[index+i];
 	}
 };
 
 void Sudoku::getCol(int index, int arr[]){
 	int i;
 	for(i=0;i<9;i++){
-		arr_check[i] = arr[intdex+(9*i)]
+		arr_check[i] = arr[index+(9*i)];
 	}
 };
 
 void Sudoku::solve(){
 	 vector<int> usedNum;
 	 int i,j,temp;
-	 for(i=0;i<sudokuSize;i+9){
+	 for(i=0;i<sudokuSize;i+=9){
 	 	getRow(i,sudokuIn);
 	 	for(j=0;j<9;j++){
 	 		if(arr_check[j]!=0){
-	 			temp=arr_check[j]
+	 			temp=arr_check[j];
 	 			usedNum.push_back(temp);
 	 		}			
 	 	}
@@ -69,7 +69,7 @@ void Sudoku::solve(){
 
 bool Sudoku::check_answer(){
 	int i;
-	for(i=0;i<sudokuSize; i+9){
+	for(i=0;i<sudokuSize;i+=9){
 		getRow(i,answerBoard);
 		if(checkUnity(arr_check) == false)
 			return false;
@@ -83,6 +83,7 @@ bool Sudoku::check_answer(){
 };
 
 void Sudoku::changeNum(int a,int b){
+	int i;
 	for(i=0;i<sudokuSize;i++){
 		if(sudokuIn[i] == b){
 			sudokuIn[i] = 0;
@@ -173,11 +174,71 @@ void Sudoku::changeCol(int a,int b){
 	}
 };
 
-void Sudoku::rotate(){
+void Sudoku::rotate(int n){
+	int turnTime=(n%4);
+	int copy[81];
+	int i,j;
 
+	for(i=0;i<81;i++){
+		copy[i]=sudokuIn[i];
+	}
+
+	switch(turnTime){
+		case 0:
+			break;
+
+		case 1:
+			for(i=0;i<9;i++){
+				getCol(i,copy);
+				for(j=0;j<9;j++){
+					sudokuIn[i*9+j] = arr_check[8-j];
+				}
+			}
+			break;
+
+		case 2:
+			for(i=8;i>=0;i--){
+				getRow(i*9,copy);
+				for(j=0;j<9;j++){
+					sudokuIn[(8-i)*9+j] = arr_check[8-j];
+				}
+			}
+			break;
+
+		case 3:
+			for(i=8;i>=0;i--){
+				getCol(i,copy);
+				for(j=0;j<9;j++){
+					sudokuIn[(8-i)*9+j] = arr_check[j];
+				}
+			}
+			break;
+	}
 };
 
-void Sudoku::flip(){
+void Sudoku::flip(int n){
+	int i,j;
+	int temp[9];
+	switch(n){
+		case 0://vertical
+			for(i=0;i<4;i++){//0&8.1&7,2&6,3&5
+				for(j=i*9;j<(i*9+9);j++){
+					temp[j]=sudokuIn[j];
+					sudokuIn[j]=sudokuIn[j+(4-i)*2*9];
+					sudokuIn[j+(4-i)*2*9]=temp[j];
+				}
+			}
+			break;
+		case 1:
+			for(i=0;i<4;i++){//0&8.1&7,2&6,3&5
+				for(j=0;j<9;j++){
+					temp[j]=sudokuIn[i+j*9];
+					sudokuIn[i+j*9]=sudokuIn[i+j*9+(4-i)*2];
+					sudokuIn[i+j*9+(4-i)*2]=temp[j];
+				}
+			}
+			break;
+	}
 
 };
 

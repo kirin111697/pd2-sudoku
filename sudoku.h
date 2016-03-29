@@ -16,8 +16,12 @@ public:
 	static const int sudokuSize = 81;
 	int getElement(int i);
 	bool checkUnity(int arr[]);
+	void getRow(int index, int arr[]);
+	void getCol(int index, int arr[]);
+	bool check_answer();
+	int answerBoard[sudokuSize];
 
-private:
-	
-	map<int,int> sudokuIn;
+private:	
+	int sudokuIn[sudokuSize];
+	int arr_check[9];
 };

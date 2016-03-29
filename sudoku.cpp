@@ -3,12 +3,14 @@
 #include <cstdlib>
 #include <ctime>
 
+int i;
+
 void giveQuestion(){
 
 };
 
 void Sudoku::readIn(){
-	int i,num;
+	int num;
 	while(1){
 		for (i=0;i<81;i++){
 			cin >> num;
@@ -20,7 +22,6 @@ void Sudoku::readIn(){
 
 bool Sudoku::checkUnity(int arr[]){
 	int arr_count[9];
-	int i;
 	for (i=0;i<9;i++){//initialize
 		arr_count[i]=0;
 	}
@@ -35,19 +36,17 @@ bool Sudoku::checkUnity(int arr[]){
 	return true;
 };
 
-int Sudoku::getElement(int i){
-	return sudokuIn[i];
+int Sudoku::getElement(int n){
+	return sudokuIn[n];
 };
 
 void Sudoku::getRow(int index, int arr[]){
-	int i;
 	for(i=0;i<9;i++){
 		arr_check[i] = arr[index+i];
 	}
 };
 
 void Sudoku::getCol(int index, int arr[]){
-	int i;
 	for(i=0;i<9;i++){
 		arr_check[i] = arr[index+(9*i)];
 	}
@@ -55,7 +54,7 @@ void Sudoku::getCol(int index, int arr[]){
 
 void Sudoku::solve(){
 	 vector<int> usedNum;
-	 int i,j,temp;
+	 int j,temp;
 	 for(i=0;i<sudokuSize;i+=9){
 	 	getRow(i,sudokuIn);
 	 	for(j=0;j<9;j++){
@@ -68,7 +67,6 @@ void Sudoku::solve(){
 };
 
 bool Sudoku::check_answer(){
-	int i;
 	for(i=0;i<sudokuSize;i+=9){
 		getRow(i,answerBoard);
 		if(checkUnity(arr_check) == false)
@@ -83,7 +81,6 @@ bool Sudoku::check_answer(){
 };
 
 void Sudoku::changeNum(int a,int b){
-	int i;
 	for(i=0;i<sudokuSize;i++){
 		if(sudokuIn[i] == b){
 			sudokuIn[i] = 0;
@@ -103,7 +100,7 @@ void Sudoku::changeNum(int a,int b){
 
 void Sudoku::changeRow(int a,int b){
 	int temp[27];
-	int low,high,i;
+	int low,high;
 	if(a>b){
 		high=a;
 		low=b;
@@ -138,7 +135,7 @@ void Sudoku::changeRow(int a,int b){
 
 void Sudoku::changeCol(int a,int b){
 	int temp[27];
-	int low,high,i,index;
+	int low,high,index;
 	if(a>b){
 		high=a;
 		low=b;
@@ -177,7 +174,7 @@ void Sudoku::changeCol(int a,int b){
 void Sudoku::rotate(int n){
 	int turnTime=(n%4);
 	int copy[81];
-	int i,j;
+	int j;
 
 	for(i=0;i<81;i++){
 		copy[i]=sudokuIn[i];
@@ -217,13 +214,13 @@ void Sudoku::rotate(int n){
 };
 
 void Sudoku::flip(int n){
-	int i,j,count;
+	int j,count;
 	int copy[81];
 
 	for(i=0;i<81;i++){
 		copy[i]=sudokuIn[i];
 	}
-	
+
 	switch(n){
 		case 0://vertical
 			for(i=0;i<9;i++){
@@ -248,8 +245,69 @@ void Sudoku::flip(int n){
 	}
 };
 
-void Sudoku::transform(){
+void Sudoku::printOut(){
+	for (i=0;i<81;i++){
+		if ((i+1)%9 == 0){
+			cout << sudokuIn[i]
+				 << endl;
+		}
+		else{
+			cout << sudokuIn[i]
+				 << " ";
+		}
+	}
+}
 
+void Sudoku::change(){
+	srand(time(NULL));
+	int option=(rand()%5+1);
+	int a,b,n;
+
+	switch(option){
+		case 1:
+			cout << "transformed by changeNum" << endl;
+			a = rand()%9+1;
+			b = rand()%9+1;
+			while(a == b){			
+				b=rand()%9+1;
+			}
+			changeNum(a,b);
+			break;
+		case 2:
+			cout << "transformed by changeRow" << endl;
+			a = rand()%3;
+			b = rand()%3;
+			while(a == b){			
+				b=rand()%3;
+			}
+			changeRow(a,b);
+			break;
+		case 3:
+			cout << "transformed by changeCol" << endl;
+			a = rand()%3;
+			b = rand()%3;
+			while(a == b){			
+				b=rand()%3;
+			}
+			changeCol(a,b);
+			break;
+		case 4:
+			cout << "transformed by flip" << endl;
+			n = rand()%2;
+			flip(n);
+			break;
+		case 5:
+			cout << "transformed by rotate" << endl;
+			n = rand()%101;
+			rotate(n);
+			break;
+	}
+}
+
+void Sudoku::transform(){
+	readIn();
+	change();
+	printOut();
 };
 
 

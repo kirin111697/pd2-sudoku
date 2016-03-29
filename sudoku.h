@@ -15,6 +15,8 @@ public:
 	void transform();
 	static const int sudokuSize = 81;
 	int getElement(int i);
+	void printOut();
+	void change();
 	bool checkUnity(int arr[]);
 	void getRow(int index, int arr[]);
 	void getCol(int index, int arr[]);

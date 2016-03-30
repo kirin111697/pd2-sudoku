@@ -1,16 +1,13 @@
 #include "sudoku.h"
-#include <vector>
 #include <cstdlib>
 #include <ctime>
-
-int i;
 
 void giveQuestion(){
 
 };
 
 void Sudoku::readIn(){
-	int num;
+	int i,num;
 	while(1){
 		for (i=0;i<81;i++){
 			cin >> num;
@@ -22,6 +19,7 @@ void Sudoku::readIn(){
 
 bool Sudoku::checkUnity(int arr[]){
 	int arr_count[9];
+	int i;
 	for (i=0;i<9;i++){//initialize
 		arr_count[i]=0;
 	}
@@ -36,37 +34,171 @@ bool Sudoku::checkUnity(int arr[]){
 	return true;
 };
 
-int Sudoku::getElement(int n){
-	return sudokuIn[n];
-};
-
 void Sudoku::getRow(int index, int arr[]){
+	int i;
 	for(i=0;i<9;i++){
-		arr_check[i] = arr[index+i];
-	}
+		arr_check[i] = arr[index-(index%9)+i];
+	}		
 };
 
 void Sudoku::getCol(int index, int arr[]){
+	int i;
 	for(i=0;i<9;i++){
-		arr_check[i] = arr[index+(9*i)];
+		arr_check[i] = arr[index-(index/9*9)+(9*i)];
+	}
+};
+
+void Sudoku::getCell(int index,int arr[]){
+	int row,newIndex,i;
+	row=(index/9);
+	if(row == 0 || row == 3 || row == 6){
+		for(i=0;i<9;i++){
+			newIndex=(index-(index%3))+i/3*9+i%3;
+			arr_check[i]=arr[newIndex];
+		}
+	}
+	else if (row == 1 || row == 4 || row == 7){
+		for(i=0;i<9;i++){
+			newIndex=(index-(index%3)-9)+i/3*9+i%3;
+			arr_check[i]=arr[newIndex];
+		}
+	}
+	else{
+		for(i=0;i<9;i++){
+			newIndex=(index-(index%3)-18)+i/3*9+i%3;
+			arr_check[i]=arr[newIndex];
+		}
+	}
+};
+
+int Sudoku::findZero(){
+	int i;
+	for(i=0;i<81;i++){
+		if(answerBoard[i] == 0){
+			return i;
+		}
+	}
+	return -1;
+};
+
+void Sudoku::getUsedNum(int n){
+	int i;
+	for(i=0;i<81;i++){
+		answerBoard[i]=sudokuIn[i];
+	}
+	getRow(n,answerBoard);
+	for(i=0;i<9;i++){
+		cout << arr_check[i]
+			 << " ";
+	}
+	cout << "   ";
+
+	for(i=0;i<9;i++){//initialize
+		usedNum[i]=0;
+	};
+
+	for(i=0;i<9;i++){
+		if(arr_check[i]!=0){
+	 		usedNum[arr_check[i]-1]=1;
+	 	}	
+	}
+	for(i=0;i<9;i++){
+		cout << usedNum[i]
+			 << " ";
+	}	
+	cout << endl;
+};
+
+void Sudoku::fillBlank(int index){
+	int next,i;
+	for(i=0;i<9;i++){
+		if(usedNum[i] > 0 || usedNum[i] == -1){
+			continue;
+		}
+		else{
+			answerBoard[index]= i+1;
+			printOut(answerBoard);
+			cout << endl;
+			if(check_answer() == false){
+				usedNum[i] = -1;
+				continue;
+			}
+			else{
+				usedNum[i]=2;
+				next=findZero();
+				if(next == -1){
+					return;
+				}
+				else{
+					fillBlank(next);
+					for(i=0;i<9;i++){//back to previous status
+						if(usedNum[i] == -1){
+							usedNum[i] = 0;
+						}
+					}
+					for(i=8;i>=0;i--){//back to previous status
+						if(usedNum[i] == 2){
+							usedNum[i] = 0;
+						break;
+						}
+					}
+					for(i=80;i>=0;i--){
+						if(answerBoard[i]!=sudokuIn[i]){
+							answerBoard[i]=0;
+						break;
+						}
+					}
+				}	
+			}
+		}		
 	}
 };
 
 void Sudoku::solve(){
-	 vector<int> usedNum;
-	 int j,temp;
-	 for(i=0;i<sudokuSize;i+=9){
-	 	getRow(i,sudokuIn);
-	 	for(j=0;j<9;j++){
-	 		if(arr_check[j]!=0){
-	 			temp=arr_check[j];
-	 			usedNum.push_back(temp);
-	 		}			
+	int zero,i;
+	printOut(sudokuIn);
+	cout << endl;
+
+	for(i=0;i<81;i=i+9){//test if the sudoku can be solved
+		getRow(i,sudokuIn);
+		if(checkUnity(arr_check)==false){
+			cout << "0"
+				 << endl;
+	 		return;
 	 	}
-	 }
+	 	getCol(i,sudokuIn);
+	 	if(checkUnity(arr_check)==false){
+			cout << "0"
+				 << endl;
+	 		return;
+	 	}
+	 	getCell(i,sudokuIn);
+	 	if(checkUnity(arr_check)==false){
+			cout << "0"
+				 << endl;
+	 		return;
+	 	}
+	}
+
+	for(i=0;i<81;i++){
+		answerBoard[i]=sudokuIn[i];
+	}
+	
+	for(i=0;i<81;i+=9){
+		zero = findZero();
+		cout << zero << endl;
+		getUsedNum(zero);
+		cout << "getUsed finished" << endl;
+		printOut(answerBoard);
+		cout << endl;
+		fillBlank(zero);
+	}
+	cout << "answer is " << endl;
+	printOut(answerBoard);
 };
 
 bool Sudoku::check_answer(){
+	int i,j,index;
 	for(i=0;i<sudokuSize;i+=9){
 		getRow(i,answerBoard);
 		if(checkUnity(arr_check) == false)
@@ -77,10 +209,19 @@ bool Sudoku::check_answer(){
 		if(checkUnity(arr_check) == false)
 			return false;
 	}
+	for(i=0;i<9;i++){
+		for(j=0;j<9;j++){
+			index=(i/3)*27+(i%3)*3+(j/3)*9+(j%3);
+			arr_check[j]=answerBoard[index];
+		}
+		if(checkUnity(arr_check) == false)
+			return false;
+	}
 	return true;
 };
 
 void Sudoku::changeNum(int a,int b){
+	int i;
 	for(i=0;i<sudokuSize;i++){
 		if(sudokuIn[i] == b){
 			sudokuIn[i] = 0;
@@ -100,7 +241,7 @@ void Sudoku::changeNum(int a,int b){
 
 void Sudoku::changeRow(int a,int b){
 	int temp[27];
-	int low,high;
+	int low,high,i;
 	if(a>b){
 		high=a;
 		low=b;
@@ -135,7 +276,7 @@ void Sudoku::changeRow(int a,int b){
 
 void Sudoku::changeCol(int a,int b){
 	int temp[27];
-	int low,high,index;
+	int low,high,index,i;
 	if(a>b){
 		high=a;
 		low=b;
@@ -174,7 +315,7 @@ void Sudoku::changeCol(int a,int b){
 void Sudoku::rotate(int n){
 	int turnTime=(n%4);
 	int copy[81];
-	int j;
+	int i,j;
 
 	for(i=0;i<81;i++){
 		copy[i]=sudokuIn[i];
@@ -214,7 +355,7 @@ void Sudoku::rotate(int n){
 };
 
 void Sudoku::flip(int n){
-	int j,count;
+	int i,j,count;
 	int copy[81];
 
 	for(i=0;i<81;i++){
@@ -245,14 +386,15 @@ void Sudoku::flip(int n){
 	}
 };
 
-void Sudoku::printOut(){
+void Sudoku::printOut(int board[]){
+	int i;
 	for (i=0;i<81;i++){
 		if ((i+1)%9 == 0){
-			cout << sudokuIn[i]
+			cout << board[i]
 				 << endl;
 		}
 		else{
-			cout << sudokuIn[i]
+			cout << board[i]
 				 << " ";
 		}
 	}
@@ -307,12 +449,5 @@ void Sudoku::change(){
 void Sudoku::transform(){
 	readIn();
 	change();
-	printOut();
+	printOut(sudokuIn);
 };
-
-
-
-
-
-
-

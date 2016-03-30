@@ -1,5 +1,5 @@
 #include <iostream>
-#include <map>
+#include <cstdio>
 using namespace std;
 
 class Sudoku{
@@ -13,7 +13,6 @@ public:
 	int findZero();
 	void getUsedNum(int n);
 	void fillBlank(int index);
-	bool checkifFull();
 	void solve();
 	bool check_answer();
 	void changeNum(int a, int b);
@@ -30,6 +29,8 @@ public:
 private:	
 	int sudokuIn[sudokuSize];
 	int answerBoard[sudokuSize];
+	int keepAns[sudokuSize];
 	int arr_check[9];
 	int usedNum[9];
+	int ansCount;
 };

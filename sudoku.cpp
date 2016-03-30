@@ -2,7 +2,46 @@
 #include <cstdlib>
 #include <ctime>
 
-void giveQuestion(){
+void Sudoku::giveQuestion(){
+	int i;
+	int cASE,way;
+	
+	int board1[81]={5,2,0,0,7,0,0,0,0,0,0,0,0,0,0,0,3,7,0,8,7,6,9,5,4,0,2,1,3,2,8,6,7,9,0,0,0,0,5,2,0,1,8,0,0,0,0,8,5,3,9,7,2,1,8,0,1,3,5,6,2,9,0,6,4,0,0,0,0,0,0,0,0,0,0,0,8,0,0,7,6};
+	int board2[81]={0,0,0,5,1,2,0,0,6,0,0,0,0,0,0,5,0,0,0,4,0,0,9,8,0,0,0,0,0,4,1,0,0,0,0,0,0,0,0,0,0,0,3,2,0,3,7,0,0,0,0,0,0,0,0,0,5,9,4,0,7,1,0,0,3,0,0,0,5,0,0,0,8,0,0,0,0,0,0,0,3};
+	int board3[81]={0,0,9,0,0,7,0,0,6,8,0,0,0,0,0,0,3,0,0,4,7,0,0,0,0,0,2,0,0,0,0,1,8,0,0,0,0,5,0,3,7,0,0,0,0,0,0,0,0,5,0,2,4,3,6,3,0,0,8,0,0,1,0,0,0,4,0,0,0,0,2,0,7,1,0,0,4,0,0,0,0};
+	int board4[81]={0,4,8,1,5,0,0,0,0,1,5,0,0,0,7,0,0,9,0,0,0,0,8,0,0,0,0,0,0,0,0,0,0,7,6,0,2,0,4,0,3,0,0,0,0,0,0,0,0,0,0,0,0,8,0,0,5,0,7,0,2,4,0,0,0,0,2,0,3,6,0,5,0,0,0,0,1,0,0,0,0};
+
+	srand(time(NULL));
+	cASE=rand()%4+1;
+	switch(cASE){
+		case 1:
+			for(i=0;i<81;i++){
+				sudokuIn[i]=board1[i];
+			}
+			transform();
+			break;
+
+		case 2:
+			for(i=0;i<81;i++){
+				sudokuIn[i]=board2[i];
+			}
+			transform();
+			break;
+
+		case 3:
+			for(i=0;i<81;i++){
+				sudokuIn[i]=board3[i];
+			}
+			transform();
+			break;
+
+		case 4:
+			for(i=0;i<81;i++){
+				sudokuIn[i]=board4[i];
+			}
+			transform();
+			break;
+	}
 
 };
 
@@ -111,6 +150,13 @@ void Sudoku::fillBlank(int index){
 				usedNum[i]=1;
 				next=findZero();
 				if(next == -1){
+					for(i=0;i<81;i++){
+						keepAns[i]=answerBoard[i];
+					}
+					ansCount++;
+					if(ansCount>1){
+						cout << "2" << endl;
+					}
 					return;
 				}
 				else{
@@ -120,18 +166,9 @@ void Sudoku::fillBlank(int index){
 			}
 		}		
 	}
-	for(i=0;i<9;i++){
-		if(i!=8){
-			if(usedNum[i] >= 1)
-				continue;
-			else
-				break;
-		}
-		else{
-			if(usedNum[i] >= 1)
-				return;
-		}
-	}
+
+	if(ansCount>1)
+		return;
 
 	for(i=0;i<9;i++){//back to previous status
 		if(usedNum[i] == -1){
@@ -150,6 +187,7 @@ void Sudoku::fillBlank(int index){
 
 void Sudoku::solve(){
 	int zero,i;
+	ansCount=0;
 
 	for(i=0;i<81;i=i+9){//test if the sudoku can be solved
 		getRow(i,sudokuIn);
@@ -179,8 +217,12 @@ void Sudoku::solve(){
 	zero = findZero();
 	getUsedNum(zero);
 	fillBlank(zero);
-
-	printOut(answerBoard);
+	if(ansCount==1){
+		cout << "1" << endl;
+		printOut(keepAns);
+	}
+	else if(ansCount==0)
+		cout << "0";
 };
 
 bool Sudoku::check_answer(){
@@ -210,7 +252,7 @@ void Sudoku::changeNum(int a,int b){
 	int i;
 	for(i=0;i<sudokuSize;i++){
 		if(sudokuIn[i] == b){
-			sudokuIn[i] = 0;
+			sudokuIn[i] = -1;
 		}
 	}
 	for(i=0;i<sudokuSize;i++){
@@ -219,7 +261,7 @@ void Sudoku::changeNum(int a,int b){
 		}
 	}
 	for(i=0;i<sudokuSize;i++){
-		if(sudokuIn[i] == 0){
+		if(sudokuIn[i] == -1){
 			sudokuIn[i] = a;
 		}
 	}
@@ -389,43 +431,46 @@ void Sudoku::printOut(int board[]){
 void Sudoku::change(){
 	srand(time(NULL));
 	int option=(rand()%5+1);
+	
 	int a,b,n;
+	int times=rand()%5+1;
 
 	switch(option){
 		case 1:
-			cout << "transformed by changeNum" << endl;
-			a = rand()%9+1;
-			b = rand()%9+1;
-			while(a == b){			
-				b=rand()%9+1;
+			while(times--){
+				a = rand()%9+1;
+				b = rand()%9+1;
+				while(a == b){			
+					b=rand()%9+1;
+				}	
+				changeNum(a,b);
 			}
-			changeNum(a,b);
 			break;
 		case 2:
-			cout << "transformed by changeRow" << endl;
-			a = rand()%3;
-			b = rand()%3;
-			while(a == b){			
-				b=rand()%3;
+			while(times--){
+				a = rand()%3;
+				b = rand()%3;
+				while(a == b){			
+					b=rand()%3;
+				}
+				changeRow(a,b);
 			}
-			changeRow(a,b);
 			break;
 		case 3:
-			cout << "transformed by changeCol" << endl;
-			a = rand()%3;
-			b = rand()%3;
-			while(a == b){			
-				b=rand()%3;
+			while(times--){
+				a = rand()%3;
+				b = rand()%3;
+				while(a == b){			
+					b=rand()%3;
+				}
+				changeCol(a,b);
 			}
-			changeCol(a,b);
 			break;
 		case 4:
-			cout << "transformed by flip" << endl;
 			n = rand()%2;
 			flip(n);
 			break;
 		case 5:
-			cout << "transformed by rotate" << endl;
 			n = rand()%101;
 			rotate(n);
 			break;
@@ -433,7 +478,6 @@ void Sudoku::change(){
 }
 
 void Sudoku::transform(){
-	readIn();
 	change();
 	printOut(sudokuIn);
 };

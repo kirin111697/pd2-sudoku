@@ -83,9 +83,6 @@ int Sudoku::findZero(){
 
 void Sudoku::getUsedNum(int n){
 	int i;
-	for(i=0;i<81;i++){
-		answerBoard[i]=sudokuIn[i];
-	}
 	getRow(n,answerBoard);
 	for(i=0;i<9;i++){
 		cout << arr_check[i]
@@ -126,31 +123,45 @@ void Sudoku::fillBlank(int index){
 			else{
 				usedNum[i]=2;
 				next=findZero();
+				cout << next << endl << endl;
 				if(next == -1){
 					return;
 				}
 				else{
+					getUsedNum(next);
 					fillBlank(next);
-					for(i=0;i<9;i++){//back to previous status
-						if(usedNum[i] == -1){
-							usedNum[i] = 0;
-						}
-					}
-					for(i=8;i>=0;i--){//back to previous status
-						if(usedNum[i] == 2){
-							usedNum[i] = 0;
-						break;
-						}
-					}
-					for(i=80;i>=0;i--){
-						if(answerBoard[i]!=sudokuIn[i]){
-							answerBoard[i]=0;
-						break;
-						}
-					}
-				}	
+				}
 			}
 		}		
+	}
+	for(i=0;i<9;i++){
+		cout << usedNum[i] << " ";
+	}
+	cout << endl << endl;
+	for(i=0;i<9;i++){
+		if(i!=8){
+			if(usedNum[i] >= 1)
+				continue;
+			else
+				break;
+		}
+		else{
+			if(usedNum[i] >= 1)
+				return;
+		}
+	}
+
+	for(i=0;i<9;i++){//back to previous status
+		if(usedNum[i] == -1){
+			usedNum[i] = 0;
+		}
+	}
+
+	for(i=8;i>=0;i--){//back to previous status
+		if(usedNum[i] == 2){
+			usedNum[i] = 0;
+			break;
+		}
 	}
 };
 
@@ -184,15 +195,14 @@ void Sudoku::solve(){
 		answerBoard[i]=sudokuIn[i];
 	}
 	
-	for(i=0;i<81;i+=9){
-		zero = findZero();
-		cout << zero << endl;
-		getUsedNum(zero);
-		cout << "getUsed finished" << endl;
-		printOut(answerBoard);
-		cout << endl;
-		fillBlank(zero);
-	}
+	zero = findZero();
+	cout << zero << endl;
+	getUsedNum(zero);
+	cout << "getUsed finished" << endl;
+	printOut(answerBoard);
+	cout << endl;
+	fillBlank(zero);
+
 	cout << "answer is " << endl;
 	printOut(answerBoard);
 };

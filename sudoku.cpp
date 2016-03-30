@@ -95,7 +95,7 @@ void Sudoku::getUsedNum(int n){
 };
 
 void Sudoku::fillBlank(int index){
-	int next,i,answerCount=0;
+	int next,i;
 	for(i=0;i<9;i++){
 		if(usedNum[i] > 0 || usedNum[i] == -1){
 			continue;
@@ -111,7 +111,7 @@ void Sudoku::fillBlank(int index){
 				usedNum[i]=1;
 				next=findZero();
 				if(next == -1){
-					answerCount++;
+					return;
 				}
 				else{
 					getUsedNum(next);
@@ -120,7 +120,6 @@ void Sudoku::fillBlank(int index){
 			}
 		}		
 	}
-
 	for(i=0;i<9;i++){
 		if(i!=8){
 			if(usedNum[i] >= 1)

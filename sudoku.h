@@ -13,6 +13,7 @@ public:
 	int findZero();
 	void getUsedNum(int n);
 	void fillBlank(int index);
+	bool checkifFull();
 	void solve();
 	bool check_answer();
 	void changeNum(int a, int b);

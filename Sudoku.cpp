@@ -145,48 +145,29 @@ void Sudoku::getUsedNum(int n){
 void Sudoku::fillBlank(){
 	int i,j,zero,next;//zero:現在要填的格(0~80),next:再下一格要填的
 	zero = findZero();
-	//getUsedNum(zero);//取得可填數字資訊
-
-	//cout << "at the beginning UsedNum : " << endl;
-	/*for(i=0;i<9;i++){
-		for(j=0;j<9;j++){
-			cout << usedNum[i][j] << " ";
-		}
-		cout << endl;
-	}
-	cout << endl;*/
 
 	for(i=0;i<9;i++){
-		/*if(usedNum[zero/9][i]!=0){
-			continue;
-		}*/
+		answerBoard[zero]=i+1;
 		
-			answerBoard[zero]=i+1;
-			/*cout << "answerBoard" << endl; 
-			printOut(answerBoard);
-			cout << endl << endl;*/
-			//getUsedNum(zero);
-			if(check_answer(zero)==false){
-				continue;//不用更換記號因為繼續迴圈後會往更大的數字嘗試
+		if(check_answer(zero)==false){
+			continue;//不用更換記號因為繼續迴圈後會往更大的數字嘗試
+		}
+		else{
+			next = findZero();
+			if(next == -1 && ansCount <= 1){
+				ansCount++;
+				for(i=0;i<81;i++){
+					keepAns[i]=answerBoard[i];
+				}
+			}
+			else if(next == -1 && ansCount > 1){
+				cout << "2" << endl;
+				return;
 			}
 			else{
-				//usedNum[zero/9][i-1]=1; 
-				next = findZero();
-				if(next == -1 && ansCount <= 1){
-					ansCount++;
-					for(i=0;i<81;i++){
-						keepAns[i]=answerBoard[i];
-					}
-				}
-				else if(next == -1 && ansCount > 1){
-					cout << "2" << endl;
-					return;
-				}
-				else{
-					fillBlank();
-				}
+				fillBlank();
 			}
-		
+		}	
 	}
 
 	if(ansCount > 1){
@@ -195,25 +176,10 @@ void Sudoku::fillBlank(){
 
 	for(i=80;i>=0;i--){
 		if(answerBoard[i]!=sudokuIn[i]){
-			//temp = answerBoard[i];
 			answerBoard[i] = 0;
-			/*cout << "answerBoard update :" << endl;
-			printOut(answerBoard);
-			cout << endl << endl;*/
-			//usedNum[i/9][temp-1]= 0;
-			//getUsedNum(zero);
-			//cout << "at the end UsedNum : " << endl;
-			/*for(i=0;i<9;i++){
-				for(j=0;j<9;j++){
-					cout << usedNum[i][j] << " ";
-				}
-				cout << endl;
-			}
-			cout << endl;*/
 			break;
 		}
 	}
-
 };
 
 void Sudoku::solve(){
@@ -244,12 +210,6 @@ void Sudoku::solve(){
 	for(i=0;i<81;i++){
 		answerBoard[i]=sudokuIn[i];
 	}
-
-	/*for(i=0;i<9;i++){//initialize
-		for(j=0;j<9;j++){
-			usedNum[i][j]=0;
-		}
-	}*/
 
 	fillBlank();
 
@@ -465,7 +425,6 @@ void Sudoku::change(){
 	srand(time(NULL));
 	int a,b,n;
 	
-	//cout << " changeNum " << endl;
 	a = rand()%9+1;
 	b = rand()%9+1;
 	while(a == b || b == 0){			
@@ -473,7 +432,6 @@ void Sudoku::change(){
 	}	
 	changeNum(a,b);
 	
-	//cout << " changeRow " << endl;
 	a = rand()%3;
 	b = rand()%3;
 	while(a == b){			
@@ -481,7 +439,6 @@ void Sudoku::change(){
 	}
 	changeRow(a,b);
 	
-	//cout << " changeCol " << endl;
 	a = rand()%3;
 	b = rand()%3;
 	while(a == b){			
@@ -489,19 +446,14 @@ void Sudoku::change(){
 	}
 	changeCol(a,b);
 	
-	//cout << " FLIP " << endl;
 	n = rand()%2;
 	flip(n);
 	
-	//cout << " ROTATE " << endl;
 	n = rand()%101;
 	rotate(n);
 }
 
 void Sudoku::transform(){
-	//printOut(sudokuIn);
-	//cout << endl << endl;
 	change();
 	printOut(sudokuIn);
-	//cout << endl << endl;
 };

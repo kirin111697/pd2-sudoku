@@ -12,9 +12,9 @@ public:
 	void getCell(int index, int arr[]);
 	int findZero();
 	void getUsedNum(int n);
-	void fillBlank(int index);
+	void fillBlank();
 	void solve();
-	bool check_answer();
+	bool check_answer(int n);
 	void changeNum(int a, int b);
 	void changeRow(int a, int b);
 	void changeCol(int a, int b);
@@ -24,13 +24,15 @@ public:
 	void change();
 	void transform();
 	static const int sudokuSize = 81;
-
+	
+	
 
 private:	
 	int sudokuIn[sudokuSize];
 	int answerBoard[sudokuSize];
 	int keepAns[sudokuSize];
 	int arr_check[9];
-	int usedNum[9];
+	int usedNum[9][9];
 	int ansCount;
+	
 };

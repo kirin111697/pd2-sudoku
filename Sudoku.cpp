@@ -63,7 +63,12 @@ bool Sudoku::checkUnity(int arr[]){
 		arr_count[i]=0;
 	}
 	for (i=0;i<9;i++){
-		arr_count[arr[i]-1]++;
+		if(arr[i] != 0){
+			arr_count[arr[i]-1]++;
+		}
+		else{
+			continue;
+		}	
 	}
 	for (i=0;i<9;i++){
 		if (arr_count[i] > 1){
@@ -121,81 +126,98 @@ int Sudoku::findZero(){
 };
 
 void Sudoku::getUsedNum(int n){
-	int i;
+	int i,j;
 	getRow(n,answerBoard);
+
+	j=n/9;
+
 	for(i=0;i<9;i++){//initialize
-		usedNum[i]=0;
-	};
+		usedNum[j][i]=0;
+	}
+
 	for(i=0;i<9;i++){
 		if(arr_check[i]!=0){
-	 		usedNum[arr_check[i]-1]=1;
-	 	}	
+	 		usedNum[j][arr_check[i]-1]=1;
+	 	}
 	}
 };
 
-void Sudoku::fillBlank(int index){
-	int next,i;
-	for(i=0;i<9;i++){
-		if(usedNum[i] > 0 || usedNum[i] == -1){
-			continue;
+void Sudoku::fillBlank(){
+	int i,j,zero,next;//zero:現在要填的格(0~80),next:再下一格要填的
+	zero = findZero();
+	//getUsedNum(zero);//取得可填數字資訊
+
+	//cout << "at the beginning UsedNum : " << endl;
+	/*for(i=0;i<9;i++){
+		for(j=0;j<9;j++){
+			cout << usedNum[i][j] << " ";
 		}
-		else{
-			answerBoard[index]= i+1;
-			/*cout << "answerBoard now : " << endl;
+		cout << endl;
+	}
+	cout << endl;*/
+
+	for(i=0;i<9;i++){
+		/*if(usedNum[zero/9][i]!=0){
+			continue;
+		}*/
+		
+			answerBoard[zero]=i+1;
+			/*cout << "answerBoard" << endl; 
 			printOut(answerBoard);
 			cout << endl << endl;*/
-			if(check_answer() == false){
-				answerBoard[index]=0;
-				usedNum[i] = -1;
-				continue;
+			//getUsedNum(zero);
+			if(check_answer(zero)==false){
+				continue;//不用更換記號因為繼續迴圈後會往更大的數字嘗試
 			}
 			else{
-				usedNum[i]=1;
-				next=findZero();
-				//cout << "next zero : " << next << endl;
-				if(next == -1){
+				//usedNum[zero/9][i-1]=1; 
+				next = findZero();
+				if(next == -1 && ansCount <= 1){
 					ansCount++;
-					if(ansCount>1){
-						cout << "2" << endl;
-						return;
-					}
-					//cout << "get one answer !!!!!!!!!!!!!!!!!!!" << endl <<endl;
 					for(i=0;i<81;i++){
 						keepAns[i]=answerBoard[i];
 					}
+				}
+				else if(next == -1 && ansCount > 1){
+					cout << "2" << endl;
 					return;
 				}
 				else{
-					getUsedNum(next);
-					fillBlank(next);
+					fillBlank();
 				}
 			}
-		}		
+		
 	}
 
-	if(ansCount>1)
+	if(ansCount > 1){
 		return;
-
-	for(i=0;i<9;i++){//back to previous status
-		if(usedNum[i] == -1){
-			usedNum[i] = 0;
-		}
 	}
 
 	for(i=80;i>=0;i--){
 		if(answerBoard[i]!=sudokuIn[i]){
+			//temp = answerBoard[i];
 			answerBoard[i] = 0;
-			//cout << "answerBoard now : " << endl;
-			//printOut(answerBoard);
-			//cout << endl << endl;
-			getUsedNum(i);
+			/*cout << "answerBoard update :" << endl;
+			printOut(answerBoard);
+			cout << endl << endl;*/
+			//usedNum[i/9][temp-1]= 0;
+			//getUsedNum(zero);
+			//cout << "at the end UsedNum : " << endl;
+			/*for(i=0;i<9;i++){
+				for(j=0;j<9;j++){
+					cout << usedNum[i][j] << " ";
+				}
+				cout << endl;
+			}
+			cout << endl;*/
 			break;
 		}
 	}
+
 };
 
 void Sudoku::solve(){
-	int zero,i;
+	int i,j;
 	ansCount=0;
 
 	for(i=0;i<81;i=i+9){//test if the sudoku can be solved
@@ -223,37 +245,39 @@ void Sudoku::solve(){
 		answerBoard[i]=sudokuIn[i];
 	}
 
-	zero = findZero();
-	getUsedNum(zero);
-	fillBlank(zero);
+	/*for(i=0;i<9;i++){//initialize
+		for(j=0;j<9;j++){
+			usedNum[i][j]=0;
+		}
+	}*/
+
+	fillBlank();
+
 	if(ansCount==1){
 		cout << "1" << endl;
 		printOut(keepAns);
 	}
 	else if(ansCount==0)
 		cout << "0";
+	else if(ansCount==2){
+		cout << "2";
+	}
 };
 
-bool Sudoku::check_answer(){
-	int i,j,index;
-	for(i=0;i<sudokuSize;i+=9){
-		getRow(i,answerBoard);
-		if(checkUnity(arr_check) == false)
-			return false;
-	}
-	for(i=0;i<9;i++){
-		getCol(i,answerBoard);
-		if(checkUnity(arr_check) == false)
-			return false;
-	}
-	for(i=0;i<9;i++){
-		for(j=0;j<9;j++){
-			index=(i/3)*27+(i%3)*3+(j/3)*9+(j%3);
-			arr_check[j]=answerBoard[index];
-		}
-		if(checkUnity(arr_check) == false)
-			return false;
-	}
+bool Sudoku::check_answer(int n){
+
+	getRow(n,answerBoard);
+	if(checkUnity(arr_check) == false)
+		return false;
+
+	getCol(n,answerBoard);
+	if(checkUnity(arr_check) == false)
+		return false;
+
+	getCell(n,answerBoard);
+	if(checkUnity(arr_check) == false)
+		return false;
+
 	return true;
 };
 
@@ -439,55 +463,45 @@ void Sudoku::printOut(int board[]){
 
 void Sudoku::change(){
 	srand(time(NULL));
-	int option=(rand()%5+1);
-	
 	int a,b,n;
-	//int times=rand()%5+1;
-
-	switch(option){
-		case 1:
-			//while(times--){
-				a = rand()%9+1;
-				b = rand()%9+1;
-				while(a == b){			
-					b=rand()%9+1;
-				}	
-				changeNum(a,b);
-			//}
-			break;
-		case 2:
-			//while(times--){
-				a = rand()%3;
-				b = rand()%3;
-				while(a == b){			
-					b=rand()%3;
-				}
-				changeRow(a,b);
-			//}
-			break;
-		case 3:
-			//while(times--){
-				a = rand()%3;
-				b = rand()%3;
-				while(a == b){			
-					b=rand()%3;
-				}
-				changeCol(a,b);
-			//}
-			break;
-		case 4:
-			n = rand()%2;
-			flip(n);
-			break;
-		case 5:
-			n = rand()%101;
-			rotate(n);
-			break;
+	
+	//cout << " changeNum " << endl;
+	a = rand()%9+1;
+	b = rand()%9+1;
+	while(a == b || b == 0){			
+		b=rand()%9+1;
+	}	
+	changeNum(a,b);
+	
+	//cout << " changeRow " << endl;
+	a = rand()%3;
+	b = rand()%3;
+	while(a == b){			
+		b=rand()%3;
 	}
+	changeRow(a,b);
+	
+	//cout << " changeCol " << endl;
+	a = rand()%3;
+	b = rand()%3;
+	while(a == b){			
+		b=rand()%3;
+	}
+	changeCol(a,b);
+	
+	//cout << " FLIP " << endl;
+	n = rand()%2;
+	flip(n);
+	
+	//cout << " ROTATE " << endl;
+	n = rand()%101;
+	rotate(n);
 }
 
 void Sudoku::transform(){
+	//printOut(sudokuIn);
+	//cout << endl << endl;
 	change();
 	printOut(sudokuIn);
-	cout << endl << endl;
+	//cout << endl << endl;
 };

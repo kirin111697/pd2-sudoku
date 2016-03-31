@@ -1,11 +1,10 @@
-a.out : main.o sudoku.o
-	g++ main.o sudoku.o
+all: Sudoku.o giveQuestion.cpp solve.cpp transform.cpp
+	g++ -o giveQuestion giveQuestion.cpp Sudoku.o
+	g++ -o solve solve.cpp Sudoku.o
+	g++ -o transform transform.cpp Sudoku.o
 
-sudoku.o : sudoku.h sudoku.cpp
-	g++ -c sudoku.cpp
-
-main.o : main.cpp sudoku.h
-	g++ -c main.cpp
+sudoku.o : Sudoku.h Sudoku.cpp
+	g++ -c Sudoku.cpp
 
 clean:
 	rm *.o

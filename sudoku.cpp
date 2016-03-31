@@ -1,4 +1,4 @@
-#include "sudoku.h"
+#include "Sudoku.h"
 #include <cstdlib>
 #include <ctime>
 
@@ -141,6 +141,9 @@ void Sudoku::fillBlank(int index){
 		}
 		else{
 			answerBoard[index]= i+1;
+			/*cout << "answerBoard now : " << endl;
+			printOut(answerBoard);
+			cout << endl << endl;*/
 			if(check_answer() == false){
 				answerBoard[index]=0;
 				usedNum[i] = -1;
@@ -149,13 +152,16 @@ void Sudoku::fillBlank(int index){
 			else{
 				usedNum[i]=1;
 				next=findZero();
+				//cout << "next zero : " << next << endl;
 				if(next == -1){
-					for(i=0;i<81;i++){
-						keepAns[i]=answerBoard[i];
-					}
 					ansCount++;
 					if(ansCount>1){
 						cout << "2" << endl;
+						return;
+					}
+					//cout << "get one answer !!!!!!!!!!!!!!!!!!!" << endl <<endl;
+					for(i=0;i<81;i++){
+						keepAns[i]=answerBoard[i];
 					}
 					return;
 				}
@@ -179,6 +185,9 @@ void Sudoku::fillBlank(int index){
 	for(i=80;i>=0;i--){
 		if(answerBoard[i]!=sudokuIn[i]){
 			answerBoard[i] = 0;
+			//cout << "answerBoard now : " << endl;
+			//printOut(answerBoard);
+			//cout << endl << endl;
 			getUsedNum(i);
 			break;
 		}
